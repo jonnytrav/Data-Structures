@@ -77,24 +77,13 @@ class DoublyLinkedList:
         copy_head = copy.copy(self.head.value)
         # contains single value
         if self.head == self.tail:
-            self.head.next = None
-            self.head.prev = None
-            self.tail.next = None
-            self.tail.prev = None
-            self.head = None
-            self.tail = None
+            self.delete(self.head)
             return copy_head
         # if empty
         elif self.head == None and self.tail == None:
             return
         else:
-            # hold reference to next value
-            next_head = self.head.next
-            # new head will have no prev value
-            next_head.prev = None
-            # sever connection
-            self.head.next = None
-            self.head = next_head
+            self.delete(self.head)
             return copy_head
 
     """Wraps the given value in a ListNode and inserts it 
