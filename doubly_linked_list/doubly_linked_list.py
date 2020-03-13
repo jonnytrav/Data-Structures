@@ -54,9 +54,15 @@ class DoublyLinkedList:
     def add_to_head(self, value):
         new_node = ListNode(value)
         self.length += 1
+        # if list is empty
         if self.head is None and self.tail is None:
             self.head = new_node
             self.tail = new_node
+        # if list contains one item
+        elif self.head == self.tail:
+            self.head.prev = new_node
+            new_node.next = self.head
+            self.head = new_node
         else:
             new_node.next = self.head
             self.head.prev = new_node
@@ -78,8 +84,9 @@ class DoublyLinkedList:
             self.head = None
             self.tail = None
             return copy_head
+        # if empty
         elif self.head == None and self.tail == None:
-            return "Nothing to be removed!"
+            return
         else:
             # hold reference to next value
             next_head = self.head.next
@@ -97,12 +104,17 @@ class DoublyLinkedList:
     def add_to_tail(self, value):
         self.length += 1
         new_node = ListNode(value)
+        # list is empty
         if self.head is None and self.tail is None:
             self.head = new_node
             self.tail = new_node
+        # if length is one
+        elif self.head is self.tail:
+            self.head.next = new_node
+            new_node.prev = self.head
+            self.tail = new_node
         else:
             self.tail.next = new_node
-            new_node.next = None
             new_node.prev = self.tail
             self.tail = new_node
 
@@ -139,58 +151,59 @@ class DoublyLinkedList:
     List and inserts it as the new head node of the List."""
 
     def move_to_front(self, node):
-        # NTS - ADD IF BLOCKS IN CASE GIVEN NODE == TAIL
-        new_head = node
-        # removes from current spot meaning adjust pointers
-        new_head.next = self.head
-        new_head.prev = None
-
-        # now adjust the old head's pointers before removing head attribute
-        self.head.prev = new_head
-
-        self.head = new_head
+        if node is self.head:
+            return
+        # if length of list is one
+        elif self.head is self.tail:
+            return
+        else:
+            # make a reference to create new node instance
+            temp_val = node.value
+            self.delete(node)
+            self.add_to_head(temp_val)
 
     """Removes the input node from its current spot in the 
     List and inserts it as the new tail node of the List."""
 
-    # def move_to_end(self, node):
-    #     new_tail = node
+    def move_to_end(self, node):
+        # if node to be moved to end is already on the end
+        if node is self.tail:
+            return
+        # if length of list is one
+        elif self.head is self.tail:
+            return
 
-    #     # tail cannot have a next
-    #     new_tail.prev = self.tail
-    #     new_tail.next = None
-
-    #     # now adjust current tail's next pointer
-    #     self.tail.next = new_tail
-
-    #     # reassign the list's tail attribute
-    #     self.tail = new_tail
+        else:
+            # make a reference to create new node instance
+            temp_val = node.value
+            self.delete(node)
+            self.add_to_tail(temp_val)
 
     """Removes a node from the list and handles cases where
     the node was the head or the tail"""
 
     def delete(self, node):
-        to_be_deleted = node
 
         # if linked list has one value, meaning head == tail
-        if self.head == self.tail and self.head == to_be_deleted:
+        if self.head is self.tail and self.head is node:
             self.head = None
             self.tail = None
             self.length = 0
+            return
         # if linked list is empty
-        elif self.length == 0 and self.head == None and self.tail == None:
-            return "Nothing to be deleted!"
+        elif self.length is 0 and self.head is None and self.tail is None:
+            return
         else:
             # if deleted node is the head
-            if to_be_deleted.prev == None:
-                to_be_deleted.next.prev = None
-                self.head = to_be_deleted.next
-                to_be_deleted.next = None
+            if node.prev is None:
+                self.head = node.next
+                node.delete()
             # if deleted node is the tail
-            elif to_be_deleted.next == None:
-                to_be_deleted.prev.next = None
-                self.tail = to_be_deleted.prev
-                to_be_deleted.prev = None
+            elif node.next is None:
+                self.tail = node.prev
+                node.delete()
+            else:
+                node.delete()
 
             self.length -= 1
 
